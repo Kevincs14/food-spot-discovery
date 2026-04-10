@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Food Spot Reviewer</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+  </head>
+  <body class="container mt-5">
+    <h1 class="mb-4">🔍 Food Spot Search</h1>
+
+    <form method="POST" class="input-group mb-3">
+      <input
+        type="text"
+        name="search"
+        class="form-control"
+        placeholder="Search for a restaurant..."
+        value="{{ search_term }}"
+      />
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <hr />
+
+    <h3>Results:</h3>
+    <ul class="list-group">
+      {% for spot in results %}
+      <li class="list-group-item">
+        <strong>{{ spot[0] }}</strong><br />
+        <small class="text-muted">{{ spot[1] }}</small>
+      </li>
+      {% else %} {% if search_term %}
+      <p>No spots found for "{{ search_term }}".</p>
+      {% endif %} {% endfor %}
+    </ul>
+  </body>
+</html>
