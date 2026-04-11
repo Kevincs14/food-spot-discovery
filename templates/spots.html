@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>All Food Spots</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  </head>
+  <body class="container mt-5">
+    <nav class="mb-4">
+      <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm">Search</a>
+      <a href="{{ url_for('spots') }}" class="btn btn-outline-secondary btn-sm">All Spots</a>
+      <a href="{{ url_for('register') }}" class="btn btn-outline-secondary btn-sm">Register</a>
+    </nav>
+
+    <h1 class="mb-4">All Food Spots</h1>
+
+    <table class="table table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Name</th>
+          <th>Address</th>
+          <th>Avg Rating</th>
+          <th>Reviews</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for spot in spots %}
+        <tr>
+          <td><a href="{{ url_for('spot_detail', spot_id=spot[0]) }}">{{ spot[1] }}</a></td>
+          <td>{{ spot[2] }}</td>
+          <td>{{ spot[4] if spot[4] else 'No ratings yet' }}</td>
+          <td>{{ spot[5] }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4">No spots found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

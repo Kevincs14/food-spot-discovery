@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>{{ spot[1] }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  </head>
+  <body class="container mt-5">
+    <nav class="mb-4">
+      <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm">Search</a>
+      <a href="{{ url_for('spots') }}" class="btn btn-outline-secondary btn-sm">All Spots</a>
+      <a href="{{ url_for('register') }}" class="btn btn-outline-secondary btn-sm">Register</a>
+    </nav>
+
+    <h1 class="mb-2">{{ spot[1] }}</h1>
+    <p class="text-muted">{{ spot[2] }}</p>
+
+    {% if spot[3] %}
+    <img src="/static/images/{{ spot[3] }}" class="img-fluid mb-3" alt="{{ spot[1] }}" style="max-height:200px;" />
+    {% endif %}
+
+    <h3 class="mt-4">Reviews</h3>
+    {% if reviews %}
+    <ul class="list-group">
+      {% for review in reviews %}
+      <li class="list-group-item">
+        <div class="d-flex justify-content-between">
+          <strong>{{ review[3] }}</strong>
+          <span class="badge bg-warning text-dark">{{ review[0] }}/5</span>
+        </div>
+        <p class="mb-1">{{ review[1] }}</p>
+        <small class="text-muted">{{ review[2].strftime('%B %d, %Y') if review[2] else '' }}</small>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>No reviews yet.</p>
+    {% endif %}
+  </body>
+</html>
