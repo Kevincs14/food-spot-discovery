@@ -52,15 +52,7 @@ def index():
 def spots():
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("""
-        SELECT f.spotID, f.name, f.address, f.picture,
-               ROUND(AVG(r.rating), 1) AS avg_rating,
-               COUNT(r.reviewID) AS review_count
-        FROM FoodSpot f
-        LEFT JOIN Review r ON f.spotID = r.spotID
-        GROUP BY f.spotID, f.name, f.address, f.picture
-        ORDER BY avg_rating DESC
-    """)
+    cur.execute("SELECT * FROM RestaurantLeaderboard ORDER BY avg_rating DESC") ## CHANGE #2
     spots = cur.fetchall()
     cur.close()
     conn.close()
