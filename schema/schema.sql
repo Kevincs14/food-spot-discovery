@@ -2,10 +2,6 @@ CREATE DATABASE IF NOT EXISTS food_reviews;
 USE food_reviews;
 
 
-CREATE USER 'food_app'@localhost IDENTIFIED BY "password123";
-GRANT SELECT, INSERT, DELETE, UPDATE ON food_reviews.* to 'food_app'@localhost;
-CREATE USER 'food_readonly'@localhost IDENTIFIED BY 'somepassword';
-GRANT SELECT ON food_reviews.* to 'food_readonly'@localhost;
 
 CREATE TABLE User (
     userID       INT PRIMARY KEY AUTO_INCREMENT,

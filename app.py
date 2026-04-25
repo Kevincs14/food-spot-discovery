@@ -1,8 +1,9 @@
 import sys
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import mysql.connector
 
 app = Flask(__name__)
+app.secret_key = 'food_spot_secret_key'
 
 DB_CONFIG = {
     "host": "localhost",
@@ -109,6 +110,47 @@ def register():
                 cur.close()
                 conn.close()
     return render_template('register.html', error=error)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT userID, username, PasswordHash FROM User WHERE username = %s", (username,))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+        if user and user[2] == password:
+            session['user_id'] = user[0]
+            session['username'] = user[1]
+            return redirect(url_for('index'))
+        error = "Invalid username or password."
+    return render_template('login.html', error=error)
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
+@app.route('/add_review', methods=['POST'])
+def add_review():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    spot_id = request.form.get('spot_id', type=int)
+    rating = request.form.get('rating', type=int)
+    comment = request.form.get('comment', '').strip()
+    if not spot_id or not rating:
+        return redirect(url_for('spot_detail', spot_id=spot_id))
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.callproc('addReview', (rating, comment, session['user_id'], spot_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return redirect(url_for('spot_detail', spot_id=spot_id))
 
 if __name__ == '__main__':
     check_db()

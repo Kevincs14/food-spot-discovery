@@ -8,7 +8,15 @@
     <nav class="mb-4">
       <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm">Search</a>
       <a href="{{ url_for('spots') }}" class="btn btn-outline-secondary btn-sm">All Spots</a>
+      {% if session.get('username') %}
+      <span class="btn btn-outline-success btn-sm disabled">{{ session.get('username') }}</span>
+      <form method="POST" action="{{ url_for('logout') }}" class="d-inline">
+        <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+      </form>
+      {% else %}
+      <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-sm">Login</a>
       <a href="{{ url_for('register') }}" class="btn btn-outline-secondary btn-sm">Register</a>
+      {% endif %}
     </nav>
 
     <h1 class="mb-2">{{ spot[1] }}</h1>
@@ -34,6 +42,31 @@
     </ul>
     {% else %}
     <p>No reviews yet.</p>
+    {% endif %}
+
+    <h3 class="mt-5">Leave a Review</h3>
+    {% if session.get('username') %}
+    <form method="POST" action="{{ url_for('add_review') }}" class="mt-3" style="max-width: 480px;">
+      <input type="hidden" name="spot_id" value="{{ spot[0] }}" />
+      <div class="mb-3">
+        <label class="form-label">Rating</label>
+        <select name="rating" class="form-select" required>
+          <option value="">Select...</option>
+          <option value="5">5 — Excellent</option>
+          <option value="4">4 — Good</option>
+          <option value="3">3 — Average</option>
+          <option value="2">2 — Poor</option>
+          <option value="1">1 — Terrible</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Comment</label>
+        <textarea name="comment" class="form-control" rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit Review</button>
+    </form>
+    {% else %}
+    <p><a href="{{ url_for('login') }}">Log in</a> to leave a review.</p>
     {% endif %}
   </body>
 </html>

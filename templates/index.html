@@ -8,7 +8,15 @@
     <nav class="mb-4">
       <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm">Search</a>
       <a href="{{ url_for('spots') }}" class="btn btn-outline-secondary btn-sm">All Spots</a>
+      {% if session.get('username') %}
+      <span class="btn btn-outline-success btn-sm disabled">{{ session.get('username') }}</span>
+      <form method="POST" action="{{ url_for('logout') }}" class="d-inline">
+        <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+      </form>
+      {% else %}
+      <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-sm">Login</a>
       <a href="{{ url_for('register') }}" class="btn btn-outline-secondary btn-sm">Register</a>
+      {% endif %}
     </nav>
 
     <h1 class="mb-4">Food Spot Search</h1>

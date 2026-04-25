@@ -8,7 +8,15 @@
     <nav class="mb-4">
       <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm">Search</a>
       <a href="{{ url_for('spots') }}" class="btn btn-outline-secondary btn-sm">All Spots</a>
+      {% if session.get('username') %}
+      <span class="btn btn-outline-success btn-sm disabled">{{ session.get('username') }}</span>
+      <form method="POST" action="{{ url_for('logout') }}" class="d-inline">
+        <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+      </form>
+      {% else %}
+      <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-sm">Login</a>
       <a href="{{ url_for('register') }}" class="btn btn-outline-secondary btn-sm">Register</a>
+      {% endif %}
     </nav>
 
     <h1 class="mb-4">All Food Spots</h1>
@@ -19,16 +27,14 @@
           <th>Name</th>
           <th>Address</th>
           <th>Avg Rating</th>
-          <th>Reviews</th>
         </tr>
       </thead>
       <tbody>
         {% for spot in spots %}
         <tr>
-          <td><a href="{{ url_for('spot_detail', spot_id=spot[0]) }}">{{ spot[1] }}</a></td>
-          <td>{{ spot[2] }}</td>
-          <td>{{ spot[4] if spot[4] else 'No ratings yet' }}</td>
-          <td>{{ spot[5] }}</td>
+          <td><a href="{{ url_for('spot_detail', spot_id=spot[1]) }}">{{ spot[2] }}</a></td>
+          <td>{{ spot[3] }}</td>
+          <td>{{ '%.1f'|format(spot[0]) if spot[0] else 'No ratings yet' }}</td>
         </tr>
         {% else %}
         <tr><td colspan="4">No spots found.</td></tr>
