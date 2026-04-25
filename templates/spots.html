@@ -10,6 +10,7 @@
       <a href="{{ url_for('spots') }}" class="btn btn-outline-secondary btn-sm">All Spots</a>
       {% if session.get('username') %}
       <span class="btn btn-outline-success btn-sm disabled">{{ session.get('username') }}</span>
+      <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary btn-sm">My Profile</a>
       <form method="POST" action="{{ url_for('logout') }}" class="d-inline">
         <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
       </form>

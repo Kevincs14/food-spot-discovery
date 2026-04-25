@@ -135,6 +135,18 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
+@app.route('/profile')
+def profile():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT avgRatingGiven, totalReviews, username FROM userSummary WHERE userID = %s", (session['user_id'],))
+    stats = cur.fetchone()
+    cur.close()
+    conn.close()
+    return render_template('profile.html', stats=stats)
+
 @app.route('/add_review', methods=['POST'])
 def add_review():
     if 'user_id' not in session:
