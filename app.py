@@ -143,9 +143,17 @@ def profile():
     cur = conn.cursor()
     cur.execute("SELECT avgRatingGiven, totalReviews, username FROM userSummary WHERE userID = %s", (session['user_id'],))
     stats = cur.fetchone()
+    cur.execute("""
+    SELECT f.name, r.rating, r.comment, r.reviewDate, f.spotID, r.reviewID
+    FROM Review r
+    JOIN FoodSpot f ON r.spotID = f.spotID
+    WHERE r.userID = %s
+    ORDER BY r.reviewDate DESC
+    """, (session['user_id'],))
+    reviews = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('profile.html', stats=stats)
+    return render_template('profile.html', stats=stats, reviews=reviews)
 
 @app.route('/add_review', methods=['POST'])
 def add_review():
@@ -163,6 +171,44 @@ def add_review():
     cur.close()
     conn.close()
     return redirect(url_for('spot_detail', spot_id=spot_id))
+
+@app.route('/edit_review/<int:review_id>', methods=['GET', 'POST'])
+def edit_review(review_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    cur = conn.cursor()
+    if request.method == 'POST':
+        rating = request.form.get('rating', type=int)
+        comment = request.form.get('comment', '').strip()
+        cur.execute("""
+            UPDATE Review SET rating = %s, comment = %s
+            WHERE reviewID = %s AND userID = %s
+        """, (rating, comment, review_id, session['user_id']))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return redirect(url_for('profile'))
+    cur.execute("SELECT reviewID, rating, comment, spotID FROM Review WHERE reviewID = %s AND userID = %s",
+                (review_id, session['user_id']))
+    review = cur.fetchone()
+    cur.close()
+    conn.close()
+    if review is None:
+        return "Review not found", 404
+    return render_template('edit_review.html', review=review)
+
+@app.route('/delete_review/<int:review_id>', methods=['POST'])
+def delete_review(review_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM Review WHERE reviewID = %s AND userID = %s", (review_id, session['user_id']))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return redirect(url_for('profile'))
 
 if __name__ == '__main__':
     check_db()
