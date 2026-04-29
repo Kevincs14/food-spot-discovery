@@ -32,12 +32,24 @@
     <ul class="list-group">
       {% for review in reviews %}
       <li class="list-group-item">
-        <div class="d-flex justify-content-between">
-          <strong>{{ review[3] }}</strong>
-          <span class="badge bg-warning text-dark">{{ review[0] }}/5</span>
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <strong>{{ review[4] }}</strong>
+            <p class="mb-1">{{ review[2] }}</p>
+            <small class="text-muted">{{ review[3].strftime('%B %d, %Y') if review[3] else '' }}</small>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-warning text-dark">{{ review[1] }}/5</span>
+            {% if session.get('is_admin') %}
+            <form method="POST" action="{{ url_for('delete_review', review_id=review[0]) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this review?')">
+              <input type="hidden" name="next" value="{{ request.url }}" />
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+            {% endif %}
+          </div>
         </div>
-        <p class="mb-1">{{ review[1] }}</p>
-        <small class="text-muted">{{ review[2].strftime('%B %d, %Y') if review[2] else '' }}</small>
       </li>
       {% endfor %}
     </ul>

@@ -110,3 +110,28 @@ DB_CONFIG = {
 ```
 
 Then open http://127.0.0.1:5000 in your browser.
+
+---
+
+## Admin Setup
+
+A default admin account is included in the schema seed data:
+
+| Field    | Value      |
+|----------|------------|
+| Username | `admin`    |
+| Password | `password` |
+
+Log in with those credentials and a **Delete** button will appear on every review on the spot pages.
+
+To promote an existing user to admin, run:
+
+```bash
+sudo mariadb
+```
+
+```sql
+USE food_reviews;
+UPDATE User SET is_admin = 1 WHERE username = 'your_username_here';
+EXIT;
+```

@@ -68,7 +68,7 @@ def spot_detail(spot_id):
     spot = cur.fetchone()
 
     cur.execute("""
-        SELECT r.rating, r.comment, r.reviewDate, u.username
+        SELECT r.reviewID, r.rating, r.comment, r.reviewDate, u.username
         FROM Review r
         JOIN User u ON r.userID = u.userID
         WHERE r.spotID = %s
@@ -103,6 +103,7 @@ def register():
                 conn.commit()
                 session['user_id'] = cur.lastrowid
                 session['username'] = username
+                session['is_admin'] = False
                 cur.close()
                 conn.close()
                 return redirect(url_for('index'))
@@ -121,13 +122,14 @@ def login():
         password = request.form.get('password', '')
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT userID, username, PasswordHash FROM User WHERE username = %s", (username,))
+        cur.execute("SELECT userID, username, PasswordHash, is_admin FROM User WHERE username = %s", (username,))
         user = cur.fetchone()
         cur.close()
         conn.close()
         if user and user[2] == password:
             session['user_id'] = user[0]
             session['username'] = user[1]
+            session['is_admin'] = bool(user[3])
             return redirect(url_for('index'))
         error = "Invalid username or password."
     return render_template('login.html', error=error)
@@ -206,11 +208,15 @@ def delete_review(review_id):
         return redirect(url_for('login'))
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("DELETE FROM Review WHERE reviewID = %s AND userID = %s", (review_id, session['user_id']))
+    if session.get('is_admin'):
+        cur.execute("DELETE FROM Review WHERE reviewID = %s", (review_id,))
+    else:
+        cur.execute("DELETE FROM Review WHERE reviewID = %s AND userID = %s", (review_id, session['user_id']))
     conn.commit()
     cur.close()
     conn.close()
-    return redirect(url_for('profile'))
+    next_url = request.form.get('next')
+    return redirect(next_url if next_url else url_for('profile'))
 
 if __name__ == '__main__':
     check_db()

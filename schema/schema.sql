@@ -7,7 +7,8 @@ CREATE TABLE User (
     userID       INT PRIMARY KEY AUTO_INCREMENT,
     username     VARCHAR(255) NOT NULL UNIQUE,
     email        VARCHAR(255) NOT NULL UNIQUE,
-    PasswordHash VARCHAR(255) NOT NULL
+    PasswordHash VARCHAR(255) NOT NULL,
+    is_admin     TINYINT(1)   NOT NULL DEFAULT 0
 );
 
 CREATE TABLE FoodSpot (
@@ -57,6 +58,9 @@ GROUP BY User.userID, username;
 
 
 -- Sample data
+INSERT INTO User (username, email, PasswordHash, is_admin) VALUES
+    ('admin',     'admin@localhost',      'password', 1);
+
 INSERT INTO User (username, email, PasswordHash) VALUES
     ('kevin_a',   'kevin@example.com',   'hash1'),
     ('nolwen_b',  'nolwen@example.com',  'hash2'),
