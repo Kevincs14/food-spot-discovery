@@ -9,7 +9,7 @@ DB_CONFIG = {
     "host": "localhost",
     "database": "food_reviews",
     "user": "food_app",
-    "password": "password123",
+    "password": "your_password",
 }
 
 def get_db_connection():
