@@ -101,6 +101,8 @@ def register():
                     (username, email, password)
                 )
                 conn.commit()
+                session['user_id'] = cur.lastrowid
+                session['username'] = username
                 cur.close()
                 conn.close()
                 return redirect(url_for('index'))
