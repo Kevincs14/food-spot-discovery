@@ -62,10 +62,20 @@
       </div>
       <div class="mb-3">
         <label class="form-label">Comment</label>
-        <textarea name="comment" class="form-control" rows="3"></textarea>
+        <textarea name="comment" id="comment" class="form-control" rows="3" maxlength="1000"></textarea>
+        <div class="form-text"><span id="comment-count">0</span>/1000 characters</div>
       </div>
       <button type="submit" class="btn btn-primary">Submit Review</button>
     </form>
+    <script>
+      const ta = document.getElementById('comment');
+      const counter = document.getElementById('comment-count');
+      ta.addEventListener('input', () => {
+        const len = ta.value.length;
+        counter.textContent = len;
+        counter.classList.toggle('text-danger', len >= 1000);
+      });
+    </script>
     {% else %}
     <p><a href="{{ url_for('login') }}">Log in</a> to leave a review.</p>
     {% endif %}
